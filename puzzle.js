@@ -5,6 +5,7 @@ function Cell(x, y) {
 
 function Board(canvasId) {
     this.board = document.getElementById(canvasId);
+    this.base = 3;
     this.nCells = 9;
     this.cellPixel = 50;
     this.widthPixel = this.nCells*this.cellPixel+1;
@@ -29,26 +30,34 @@ Board.prototype.reset = function() {
     this.boardCtx.stroke();
 }
 
-Board.prototype.setTextLargeCell = function(cell, text) {
+Board.prototype.setDigitLargeCell = function(cell, digit) {
     var cellCanvasX = cell.x * this.cellPixel + this.cellPixel/2;
-    var cellCanvasY = cell.y * this.cellPixel + this.cellPixel/2;
-    this.boardCtx.font = "36px serif";
+    var cellCanvasY = cell.y * this.cellPixel + this.cellPixel/2+5;
+    this.boardCtx.font = "40px serif";
     this.boardCtx.textAlign = "center";
     this.boardCtx.textBaseline = "middle";
-    this.boardCtx.fillText(text, cellCanvasX, cellCanvasY);
+    this.boardCtx.fillText(digit, cellCanvasX, cellCanvasY);
+}
+
+Board.prototype.setDigitSmallCell = function(cell, digit) {
+    var cellRow = Math.floor((digit-1)/this.base);
+    var cellCol = (digit-1) % this.base;
+    var cellSubWidth = this.cellPixel / this.base;
+    var cellCanvasX = cell.x * this.cellPixel + cellCol * cellSubWidth + cellSubWidth/2;
+    var cellCanvasY = cell.y * this.cellPixel + cellRow * cellSubWidth + cellSubWidth/2;
+    this.boardCtx.font = "14px serif";
+    this.boardCtx.textAlign = "center";
+    this.boardCtx.textBaseline = "middle";
+    this.boardCtx.fillText(digit, cellCanvasX, cellCanvasY);
 }
 
 
-
 var b = new Board("board");
-var n=1;
-var c;
-for (i=0; i<b.nCells; i++) {
-    for (j=0; j<b.nCells; j++) {
-        c = new Cell(i, j);
-        b.setTextLargeCell(c,n);
-        n++;
-        if (n>b.nCells) n=1;
-    }
+var n, c, c2;
+for (n=1; n<=9; n++) {
+    c = new Cell(2,3);
+    b.setDigitSmallCell(c, n);
+    c2 = new Cell(n-1, n-1);
+    b.setDigitLargeCell(c2, n);
 }
 
